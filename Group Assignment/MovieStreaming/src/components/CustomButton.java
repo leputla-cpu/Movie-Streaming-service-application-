@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import utils.SoundManager;
 
 public class CustomButton {
 
@@ -19,10 +20,10 @@ public class CustomButton {
         button.setAlignment(Pos.CENTER);
         button.setCursor(Cursor.HAND);
 
+        button.setOnMouseEntered(event -> SoundManager.playHover());
         button.setOnMouseClicked(event -> {
-            if (action != null) {
-                action.run();
-            }
+            SoundManager.playClick();
+            if (action != null) action.run();
         });
 
         return button;

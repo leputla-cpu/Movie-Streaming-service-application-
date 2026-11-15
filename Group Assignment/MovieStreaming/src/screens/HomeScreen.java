@@ -1,76 +1,107 @@
-
 package screens;
 
-import components.NavigationBar;
 import components.FeaturedMovie;
 import components.MovieRow;
 import data.MovieData;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+import javafx.scene.layout.StackPane;
 import models.Category;
 import models.Movie;
 
-import javafx.geometry.Insets;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-
-import services.NavigationService;
-
+import java.util.ArrayList;
 import java.util.List;
 
+/** Landing page: featured title followed by the five horizontally scrolling genres. */
 public class HomeScreen {
-
-    private final NavigationService navigationService =
-            new NavigationService();
-
-    public VBox create() {
-
-        VBox root = new VBox();
-        root.getStyleClass().add("main-root");
-
-        NavigationBar navigationBar = new NavigationBar();
-        HBox navigation = navigationBar.create();
-
-        VBox content = new VBox(20);
-        content.setPadding(new Insets(20, 30, 30, 30));
-        content.setMaxWidth(Double.MAX_VALUE);
+    public ScrollPane create() {
+        VBox content = new VBox(23);
         content.getStyleClass().add("home-content");
+        content.setPadding(new Insets(26, 30, 38, 30));
 
-        List<Movie> actionMovies =
-                MovieData.getMoviesByCategory(Category.ACTION);
+        Label welcome = new Label("Welcome to your movie universe");
+        welcome.getStyleClass().add("home-welcome");
+        Label intro = new Label("Find your next favourite story.");
+        intro.getStyleClass().add("home-intro");
+        VBox introBlock = new VBox(5, welcome, intro);
 
-        if (!actionMovies.isEmpty()) {
-            FeaturedMovie featuredMovie = new FeaturedMovie();
-            content.getChildren().add(
-                    featuredMovie.create(actionMovies.get(0))
-            );
+        // Rotate the featured movie through the catalogue automatically.
+        // A copy is used so the original MovieData collection is never modified.
+        List<Movie> featuredMovies = new ArrayList<>(MovieData.getAllMovies());
+        if (!featuredMovies.isEmpty()) {
+            StackPane featuredContainer = new StackPane();
+            featuredContainer.getStyleClass().add("featured-rotation-container");
+            featuredContainer.getChildren().setAll(
+                    new FeaturedMovie().create(featuredMovies.get(0)));
+
+            final int[] currentIndex = {0};
+            Timeline featuredRotation = new Timeline(new KeyFrame(
+                    Duration.seconds(8), event -> {
+                        currentIndex[0] = (currentIndex[0] + 1) % featuredMovies.size();
+                        StackPane nextFeatured = new FeaturedMovie()
+                                .create(featuredMovies.get(currentIndex[0]));
+                        nextFeatured.setOpacity(0);
+                        featuredContainer.getChildren().setAll(nextFeatured);
+
+                        FadeTransition fade = new FadeTransition(
+                                Duration.millis(650), nextFeatured);
+                        fade.setFromValue(0);
+                        fade.setToValue(1);
+                        fade.play();
+                    }
+            ));
+            featuredRotation.setCycleCount(Timeline.INDEFINITE);
+
+            // Pause while the visitor is interacting with the featured movie.
+            featuredContainer.setOnMouseEntered(event -> featuredRotation.pause());
+            featuredContainer.setOnMouseExited(event -> featuredRotation.play());
+
+            // Stop the timer when Home is no longer part of the displayed scene.
+            featuredContainer.sceneProperty().addListener((observable, oldScene, newScene) -> {
+                if (newScene == null) {
+                    featuredRotation.stop();
+                } else {
+                    featuredRotation.playFromStart();
+                }
+            });
+
+            content.getChildren().addAll(introBlock, featuredContainer);
+        } else {
+            content.getChildren().add(introBlock);
         }
 
-        Category[] categories = {
-            Category.ACTION,
-            Category.COMEDY,
-            Category.HORROR,
-            Category.SCIENCE_FICTION,
-            Category.ANIMATION
-        };
+        HBox heading = new HBox(12);
+        heading.setAlignment(Pos.CENTER_LEFT);
+        Label catalogueTitle = new Label("Explore the catalogue");
+        catalogueTitle.getStyleClass().add("catalogue-heading");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label count = new Label(MovieData.getMovieCount() + " MOVIES");
+        count.getStyleClass().add("catalogue-count");
+        heading.getChildren().addAll(catalogueTitle, spacer, count);
 
-        MovieRow movieRow = new MovieRow();
+        VBox rows = new VBox(24);
+        rows.getStyleClass().add("catalogue-sections");
+        for (Category category : Category.values()) rows.getChildren().add(new MovieRow().create(category));
 
-        for (Category category : categories) {
-            content.getChildren().add(movieRow.create(category));
-        }
+        content.getChildren().addAll(heading, rows);
 
-        ScrollPane scrollPane = new ScrollPane(content);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setHbarPolicy(
-                ScrollPane.ScrollBarPolicy.NEVER
-        );
-        scrollPane.setVbarPolicy(
-                ScrollPane.ScrollBarPolicy.AS_NEEDED
-        );
-        scrollPane.getStyleClass().add("main-scroll");
-
-        root.getChildren().addAll(navigation, scrollPane);
-
-        return root;
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroll.setPannable(true);
+        scroll.getStyleClass().add("main-scroll");
+        return scroll;
     }
 }

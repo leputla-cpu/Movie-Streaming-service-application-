@@ -1,18 +1,19 @@
 
 package components;
 
-import javafx.animation.ScaleTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 
 import models.Movie;
 import services.NavigationService;
+import animations.HoverAnimation;
+import utils.ImageLoader;
+import utils.SoundManager;
 
 public class MovieCard {
 
@@ -40,15 +41,7 @@ public class MovieCard {
         String imageUrl = movie.getPosterUrl();
 
         if (imageUrl != null && !imageUrl.isBlank()) {
-            try {
-                Image image = new Image(imageUrl, true);
-                poster.setImage(image);
-
-            } catch (IllegalArgumentException exception) {
-                System.out.println(
-                    "Invalid poster URL for " + movie.getTitle()
-                );
-            }
+            poster.setImage(ImageLoader.load(imageUrl));
         }
 
         poster.setFitWidth(CARD_WIDTH);
@@ -80,30 +73,14 @@ public class MovieCard {
             title
         );
 
-        // Open movie details when clicked
+        // Shared hover animation and optional interface sound.
+        HoverAnimation.apply(card);
+        card.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> SoundManager.playHover());
+
+        // Open movie details when clicked.
         card.setOnMouseClicked(event -> {
+            SoundManager.playClick();
             navigationService.showMovieDetails(movie);
-        });
-
-        // Smooth hover animation
-        card.setOnMouseEntered(event -> {
-
-            ScaleTransition transition =
-                new ScaleTransition(Duration.millis(180), card);
-
-            transition.setToX(1.06);
-            transition.setToY(1.06);
-            transition.play();
-        });
-
-        card.setOnMouseExited(event -> {
-
-            ScaleTransition transition =
-                new ScaleTransition(Duration.millis(180), card);
-
-            transition.setToX(1.0);
-            transition.setToY(1.0);
-            transition.play();
         });
 
         return card;

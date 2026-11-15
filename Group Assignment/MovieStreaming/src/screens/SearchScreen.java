@@ -1,13 +1,7 @@
-
 package screens;
 
 import components.MovieCard;
 import data.MovieData;
-import models.Category;
-import models.Movie;
-import services.NavigationService;
-
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -15,124 +9,63 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import models.Movie;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/** Live search across movie titles, descriptions and genre names. */
 public class SearchScreen {
-
-    private final NavigationService navigationService =
-            new NavigationService();
-
     private final FlowPane results = new FlowPane();
     private final Label resultMessage = new Label();
 
-    private final List<Movie> allMovies = new ArrayList<>();
+    public VBox create() { return create(""); }
 
-    public VBox create() {
-
-        VBox root = new VBox(20);
-        root.getStyleClass().add("main-root");
-        root.setPadding(new Insets(25, 30, 30, 30));
-
-        loadMovies();
+    public VBox create(String initialQuery) {
+        VBox root = new VBox(16);
+        root.setPadding(new Insets(28, 30, 35, 30));
+        root.getStyleClass().add("screen-content");
 
         Label heading = new Label("Search Movies");
-        heading.getStyleClass().add("details-title");
-
-        Label backLabel = new Label("Back to Home");
-        backLabel.getStyleClass().add("player-back");
-        backLabel.setOnMouseClicked(event ->
-                navigationService.showHome()
-        );
+        heading.getStyleClass().add("screen-heading");
+        Label subtitle = new Label("Search by title, story description or genre.");
+        subtitle.getStyleClass().add("screen-subheading");
 
         TextField searchField = new TextField();
-        searchField.setPromptText("Search for a movie...");
+        searchField.setPromptText("Type a movie title or genre...");
+        searchField.setMaxWidth(560);
         searchField.getStyleClass().add("search-field");
-        searchField.setMaxWidth(500);
+        searchField.setText(initialQuery == null ? "" : initialQuery);
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> searchMovies(newValue));
 
-        searchField.textProperty().addListener(
-                (observable, oldValue, newValue) ->
-                        searchMovies(newValue)
-        );
-
-        results.setHgap(18);
+        results.setHgap(19);
         results.setVgap(25);
-        results.setPadding(new Insets(10));
+        results.setPadding(new Insets(10, 3, 20, 3));
         results.setAlignment(Pos.TOP_LEFT);
+        resultMessage.getStyleClass().add("search-message");
 
-        resultMessage.getStyleClass().add("player-description");
+        ScrollPane scroll = new ScrollPane(results);
+        scroll.setFitToWidth(true);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroll.getStyleClass().add("main-scroll");
+        VBox.setVgrow(scroll, javafx.scene.layout.Priority.ALWAYS);
 
-        ScrollPane scrollPane = new ScrollPane(results);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setHbarPolicy(
-                ScrollPane.ScrollBarPolicy.NEVER
-        );
-        scrollPane.setVbarPolicy(
-                ScrollPane.ScrollBarPolicy.AS_NEEDED
-        );
-        scrollPane.getStyleClass().add("main-scroll");
-        VBox.setVgrow(scrollPane, javafx.scene.layout.Priority.ALWAYS);
-
-        root.getChildren().addAll(
-                backLabel,
-                heading,
-                searchField,
-                resultMessage,
-                scrollPane
-        );
-
-        searchMovies("");
-
+        root.getChildren().addAll(heading, subtitle, searchField, resultMessage, scroll);
+        searchMovies(searchField.getText());
         return root;
     }
 
-    private void loadMovies() {
-
-        allMovies.clear();
-
-        Category[] categories = {
-            Category.ACTION,
-            Category.COMEDY,
-            Category.HORROR,
-            Category.SCIENCE_FICTION,
-            Category.ANIMATION
-        };
-
-        for (Category category : categories) {
-            allMovies.addAll(
-                    MovieData.getMoviesByCategory(category)
-            );
-        }
-    }
-
-    private void searchMovies(String searchText) {
-
+    private void searchMovies(String text) {
         results.getChildren().clear();
-
-        String query = searchText == null
-                ? ""
-                : searchText.trim().toLowerCase();
-
-        int count = 0;
-
-        for (Movie movie : allMovies) {
-
-            if (query.isEmpty()
-                    || movie.getTitle().toLowerCase().contains(query)) {
-
-                MovieCard card = new MovieCard();
-                results.getChildren().add(card.create(movie));
-                count++;
-            }
-        }
-
-        if (count == 0) {
-            resultMessage.setText("No movies found.");
-        } else {
-            resultMessage.setText(
-                    count + " movie(s) found."
-            );
-        }
+        String query = text == null ? "" : text.trim().toLowerCase();
+        List<Movie> matches = MovieData.getAllMovies().stream()
+                .filter(movie -> query.isEmpty()
+                        || movie.getTitle().toLowerCase().contains(query)
+                        || movie.getDescription().toLowerCase().contains(query)
+                        || movie.getCategory().getDisplayName().toLowerCase().contains(query))
+                .toList();
+        for (Movie movie : matches) results.getChildren().add(new MovieCard().create(movie));
+        resultMessage.setText(matches.size() + (matches.size() == 1 ? " movie found." : " movies found."));
+        if (matches.isEmpty()) resultMessage.setText("No matching movies. Try another title or genre.");
     }
 }

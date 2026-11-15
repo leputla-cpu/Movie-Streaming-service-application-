@@ -11,10 +11,11 @@ import javafx.scene.layout.VBox;
 import models.Category;
 import models.Movie;
 import data.MovieData;
+import services.NavigationService;
+import javafx.scene.Cursor;
 
 public class MovieRow {
 
-    private static final double CARD_WIDTH = 130;
     private static final double CARD_GAP = 14;
 
     public VBox create(Category category) {
@@ -26,6 +27,12 @@ public class MovieRow {
 
         Label heading = new Label(category.getDisplayName());
         heading.getStyleClass().add("movie-row-heading");
+        Label count = new Label(MovieData.getMoviesByCategory(category).size() + " titles");
+        count.getStyleClass().add("movie-row-count");
+        javafx.scene.layout.HBox titleLine = new javafx.scene.layout.HBox(10, heading, count);
+        titleLine.setAlignment(Pos.CENTER_LEFT);
+        titleLine.setCursor(Cursor.HAND);
+        titleLine.setOnMouseClicked(event -> new NavigationService().showCategory(category));
 
         HBox cards = new HBox(CARD_GAP);
         cards.setAlignment(Pos.CENTER_LEFT);
@@ -43,7 +50,9 @@ public class MovieRow {
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(false);
 
-        scrollPane.setMaxWidth(Double.MAX_VALUE);
+        // Five poster cards fit in the visible viewport; the remaining titles scroll horizontally.
+        scrollPane.setPrefWidth(720);
+        scrollPane.setMaxWidth(720);
         scrollPane.setMinWidth(0);
 
         scrollPane.setHbarPolicy(
@@ -57,7 +66,7 @@ public class MovieRow {
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add("movie-horizontal-scroll");
 
-        section.getChildren().addAll(heading, scrollPane);
+        section.getChildren().addAll(titleLine, scrollPane);
 
         return section;
     }

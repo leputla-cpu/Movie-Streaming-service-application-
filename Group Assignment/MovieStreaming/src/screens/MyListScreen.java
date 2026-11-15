@@ -1,12 +1,10 @@
-
 package screens;
 
 import components.MovieCard;
 import data.MovieData;
 import models.Movie;
-import services.NavigationService;
-
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
@@ -15,109 +13,56 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
+/** In-memory saved-movie collection for the current application session. */
 public class MyListScreen {
-
-    private static final List<Movie> myMovies =
-            new ArrayList<>();
-
-    private final NavigationService navigationService =
-            new NavigationService();
+    private static final List<Movie> myMovies = new ArrayList<>();
 
     public static void addMovie(Movie movie) {
-
-        if (movie == null) {
-            return;
-        }
-
-        boolean alreadyExists = myMovies.stream()
-                .anyMatch(existing ->
-                        existing.getId() == movie.getId()
-                );
-
-        if (!alreadyExists) {
-            myMovies.add(movie);
-        }
+        if (movie != null && !contains(movie)) myMovies.add(movie);
     }
 
     public static void removeMovie(Movie movie) {
-
-        if (movie != null) {
-            myMovies.removeIf(existing ->
-                    existing.getId() == movie.getId()
-            );
-        }
+        if (movie != null) myMovies.removeIf(existing -> existing.getId() == movie.getId());
     }
 
-    public static List<Movie> getMyMovies() {
-        return new ArrayList<>(myMovies);
+    public static boolean contains(Movie movie) {
+        return movie != null && myMovies.stream().anyMatch(existing -> existing.getId() == movie.getId());
     }
+
+    public static List<Movie> getMyMovies() { return new ArrayList<>(myMovies); }
 
     public VBox create() {
-
-        VBox root = new VBox(20);
-        root.getStyleClass().add("main-root");
-        root.setPadding(new Insets(25, 30, 30, 30));
-
-        Label backLabel = new Label("Back to Home");
-        backLabel.getStyleClass().add("player-back");
-
-        backLabel.setOnMouseClicked(event ->
-                navigationService.showHome()
-        );
+        VBox root = new VBox(16);
+        root.setPadding(new Insets(28, 30, 35, 30));
+        root.getStyleClass().add("screen-content");
 
         Label heading = new Label("My List");
-        heading.getStyleClass().add("details-title");
+        heading.getStyleClass().add("screen-heading");
+        Label subtitle = new Label("Movies you have saved for later.");
+        subtitle.getStyleClass().add("screen-subheading");
 
-        FlowPane movieContainer = new FlowPane();
-        movieContainer.setHgap(18);
-        movieContainer.setVgap(25);
-        movieContainer.setPadding(new Insets(10));
+        FlowPane grid = new FlowPane();
+        grid.setHgap(19);
+        grid.setVgap(25);
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setPadding(new Insets(8, 0, 15, 0));
 
-        if (myMovies.isEmpty()) {
-
-            Label emptyMessage = new Label(
-                    "You haven't added any movies to your list yet."
-            );
-
-            emptyMessage.getStyleClass().add(
-                    "player-description"
-            );
-
-            movieContainer.getChildren().add(emptyMessage);
-
+        List<Movie> saved = getMyMovies();
+        if (saved.isEmpty()) {
+            Label empty = new Label("Your list is empty. Open a movie and select Add to My List.");
+            empty.getStyleClass().add("my-list-empty");
+            grid.getChildren().add(empty);
         } else {
-
-            for (Movie movie : myMovies) {
-
-                MovieCard movieCard = new MovieCard();
-
-                movieContainer.getChildren().add(
-                        movieCard.create(movie)
-                );
-            }
+            for (Movie movie : saved) grid.getChildren().add(new MovieCard().create(movie));
         }
 
-        ScrollPane scrollPane = new ScrollPane(movieContainer);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setHbarPolicy(
-                ScrollPane.ScrollBarPolicy.NEVER
-        );
-        scrollPane.setVbarPolicy(
-                ScrollPane.ScrollBarPolicy.AS_NEEDED
-        );
-        scrollPane.getStyleClass().add("main-scroll");
-
-        VBox.setVgrow(
-                scrollPane,
-                javafx.scene.layout.Priority.ALWAYS
-        );
-
-        root.getChildren().addAll(
-                backLabel,
-                heading,
-                scrollPane
-        );
-
+        ScrollPane scroll = new ScrollPane(grid);
+        scroll.setFitToWidth(true);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroll.getStyleClass().add("main-scroll");
+        VBox.setVgrow(scroll, javafx.scene.layout.Priority.ALWAYS);
+        root.getChildren().addAll(heading, subtitle, scroll);
         return root;
     }
 }
