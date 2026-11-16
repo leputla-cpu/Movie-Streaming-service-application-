@@ -1,4 +1,3 @@
-
 package components;
 
 import javafx.geometry.Pos;
