@@ -1,22 +1,29 @@
 
 package components;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import models.Category;
 import models.Movie;
 import data.MovieData;
 import services.NavigationService;
-import javafx.scene.Cursor;
+
+import java.util.List;
 
 public class MovieRow {
 
     private static final double CARD_GAP = 14;
+    private static final double DEFAULT_CARD_WIDTH = 130;
+    private static final double POSTER_HEIGHT = 195;
+
+    private static final int VISIBLE_MOVIES = 5;
 
     public VBox create(Category category) {
 
@@ -25,48 +32,105 @@ public class MovieRow {
         section.setMaxWidth(Double.MAX_VALUE);
         section.getStyleClass().add("movie-row-section");
 
+        // Category heading
         Label heading = new Label(category.getDisplayName());
         heading.getStyleClass().add("movie-row-heading");
-        Label count = new Label(MovieData.getMoviesByCategory(category).size() + " titles");
-        count.getStyleClass().add("movie-row-count");
-        javafx.scene.layout.HBox titleLine = new javafx.scene.layout.HBox(10, heading, count);
-        titleLine.setAlignment(Pos.CENTER_LEFT);
-        titleLine.setCursor(Cursor.HAND);
-        titleLine.setOnMouseClicked(event -> new NavigationService().showCategory(category));
 
+        List<Movie> movies = MovieData.getMoviesByCategory(category);
+
+        Label count = new Label(movies.size() + " titles");
+        count.getStyleClass().add("movie-row-count");
+
+        HBox titleLine = new HBox(10, heading, count);
+        titleLine.setAlignment(Pos.CENTER_LEFT);
+        titleLine.setCursor(javafx.scene.Cursor.HAND);
+
+        titleLine.setOnMouseClicked(event ->
+                new NavigationService().showCategory(category)
+        );
+
+        // Horizontal movie container
         HBox cards = new HBox(CARD_GAP);
         cards.setAlignment(Pos.CENTER_LEFT);
         cards.setPadding(new Insets(12, 6, 12, 6));
 
-        for (Movie movie :
-                MovieData.getMoviesByCategory(category)) {
+        // Shared responsive width for all movie cards in this row.
+        SimpleDoubleProperty cardWidth =
+                new SimpleDoubleProperty(DEFAULT_CARD_WIDTH);
+
+        for (Movie movie : movies) {
 
             MovieCard movieCard = new MovieCard();
-            cards.getChildren().add(movieCard.create(movie));
+
+            cards.getChildren().add(
+                    movieCard.create(movie, cardWidth)
+            );
         }
 
+        // Horizontal scrolling container
         ScrollPane scrollPane = new ScrollPane(cards);
 
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(false);
 
-        // Five poster cards fit in the visible viewport; the remaining titles scroll horizontally.
-        scrollPane.setPrefWidth(720);
-        scrollPane.setMaxWidth(720);
         scrollPane.setMinWidth(0);
+        scrollPane.setMaxWidth(Double.MAX_VALUE);
 
         scrollPane.setHbarPolicy(
-            ScrollPane.ScrollBarPolicy.AS_NEEDED
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
         );
 
         scrollPane.setVbarPolicy(
-            ScrollPane.ScrollBarPolicy.NEVER
+                ScrollPane.ScrollBarPolicy.NEVER
         );
 
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add("movie-horizontal-scroll");
 
-        section.getChildren().addAll(titleLine, scrollPane);
+        // Make the row occupy the available width of its parent.
+        scrollPane.prefWidthProperty().bind(
+                section.widthProperty()
+        );
+
+        /*
+         * Calculate the card width from the actual visible viewport.
+         * Five cards + four gaps + horizontal card-container padding.
+         */
+        scrollPane.viewportBoundsProperty().addListener(
+                (observable, oldBounds, newBounds) -> {
+
+                    double viewportWidth = newBounds.getWidth();
+
+                    if (viewportWidth <= 0) {
+                        return;
+                    }
+
+                    double horizontalPadding = 12;
+
+                    double totalGap =
+                            CARD_GAP * (VISIBLE_MOVIES - 1);
+
+                    double availableWidth =
+                            viewportWidth
+                            - horizontalPadding
+                            - totalGap;
+
+                    double newCardWidth =
+                            availableWidth / VISIBLE_MOVIES;
+
+                    // Prevent cards from becoming excessively small.
+                    newCardWidth = Math.max(55, newCardWidth);
+
+                    cardWidth.set(newCardWidth);
+                }
+        );
+
+        VBox.setVgrow(scrollPane, Priority.NEVER);
+
+        section.getChildren().addAll(
+                titleLine,
+                scrollPane
+        );
 
         return section;
     }

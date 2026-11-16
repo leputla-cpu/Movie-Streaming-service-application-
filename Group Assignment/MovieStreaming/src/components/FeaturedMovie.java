@@ -1,20 +1,21 @@
+
 package components;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import models.Movie;
 import services.NavigationService;
-import utils.ImageLoader;
+import services.YouTubeService;
 
-/** Featured movie banner. The assigned trailer opens from the dedicated player screen. */
 public class FeaturedMovie {
 
     private final NavigationService navigationService = new NavigationService();
+    private final YouTubeService youtubeService = new YouTubeService();
 
     public StackPane create(Movie movie) {
         StackPane featured = new StackPane();
@@ -23,15 +24,22 @@ public class FeaturedMovie {
         featured.setMinHeight(300);
         featured.setPrefHeight(380);
 
-        ImageView background = new ImageView();
-        if (movie.getPosterUrl() != null && !movie.getPosterUrl().isBlank()) {
-            background.setImage(ImageLoader.load(movie.getPosterUrl()));
-        }
-        background.setPreserveRatio(false);
-        background.setSmooth(true);
-        background.fitWidthProperty().bind(featured.widthProperty());
-        background.fitHeightProperty().bind(featured.heightProperty());
-        background.getStyleClass().add("featured-background");
+        // Trailer preview replaces the poster background.
+        WebView trailerPreview = youtubeService.getWebView();
+        trailerPreview.setMouseTransparent(true);
+        trailerPreview.setMinSize(0, 300);
+        trailerPreview.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        trailerPreview.prefWidthProperty().bind(featured.widthProperty());
+        trailerPreview.prefHeightProperty().bind(featured.heightProperty());
+
+        // Load the trailer without automatically playing it.
+        youtubeService.loadPreviewVideo(movie.getYoutubeUrl());
+
+        // Play silently when the mouse enters the featured banner.
+        featured.setOnMouseEntered(event -> youtubeService.playVideo());
+
+        // Pause the preview when the mouse leaves the banner.
+        featured.setOnMouseExited(event -> youtubeService.pauseVideo());
 
         Label title = new Label(movie.getTitle());
         title.setWrapText(true);
@@ -49,8 +57,11 @@ public class FeaturedMovie {
         description.getStyleClass().add("featured-description");
 
         CustomButton customButton = new CustomButton();
+
+        // Actual playback still opens the dedicated player screen.
         StackPane playButton = customButton.create("Play Trailer", "primary-button",
                 () -> navigationService.showPlayer(movie));
+
         StackPane moreInfoButton = customButton.create("More Info", "secondary-button",
                 () -> navigationService.showMovieDetails(movie));
 
@@ -62,9 +73,11 @@ public class FeaturedMovie {
         information.setAlignment(Pos.CENTER_LEFT);
         information.setMaxWidth(600);
         information.setPadding(new Insets(35, 40, 35, 40));
+
         StackPane.setAlignment(information, Pos.CENTER_LEFT);
 
-        featured.getChildren().addAll(background, information);
+        featured.getChildren().addAll(trailerPreview, information);
+
         return featured;
     }
 }

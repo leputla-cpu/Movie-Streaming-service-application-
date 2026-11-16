@@ -1,3 +1,4 @@
+
 package screens;
 
 import components.MovieCard;
@@ -12,13 +13,19 @@ import javafx.scene.layout.VBox;
 import models.Movie;
 
 import java.util.List;
+import java.util.Locale;
 
 /** Live search across movie titles, descriptions and genre names. */
 public class SearchScreen {
+
     private final FlowPane results = new FlowPane();
     private final Label resultMessage = new Label();
 
-    public VBox create() { return create(""); }
+    private TextField searchField;
+
+    public VBox create() {
+        return create("");
+    }
 
     public VBox create(String initialQuery) {
         VBox root = new VBox(16);
@@ -27,20 +34,31 @@ public class SearchScreen {
 
         Label heading = new Label("Search Movies");
         heading.getStyleClass().add("screen-heading");
-        Label subtitle = new Label("Search by title, story description or genre.");
+
+        Label subtitle = new Label(
+                "Search by title, story description or genre."
+        );
         subtitle.getStyleClass().add("screen-subheading");
 
-        TextField searchField = new TextField();
+        searchField = new TextField();
         searchField.setPromptText("Type a movie title or genre...");
         searchField.setMaxWidth(560);
         searchField.getStyleClass().add("search-field");
-        searchField.setText(initialQuery == null ? "" : initialQuery);
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> searchMovies(newValue));
+
+        searchField.setText(
+                initialQuery == null ? "" : initialQuery
+        );
+
+        searchField.textProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        searchMovies(newValue)
+        );
 
         results.setHgap(19);
         results.setVgap(25);
         results.setPadding(new Insets(10, 3, 20, 3));
         results.setAlignment(Pos.TOP_LEFT);
+
         resultMessage.getStyleClass().add("search-message");
 
         ScrollPane scroll = new ScrollPane(results);
@@ -48,24 +66,86 @@ public class SearchScreen {
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll.getStyleClass().add("main-scroll");
+
         VBox.setVgrow(scroll, javafx.scene.layout.Priority.ALWAYS);
 
-        root.getChildren().addAll(heading, subtitle, searchField, resultMessage, scroll);
+        root.getChildren().addAll(
+                heading,
+                subtitle,
+                searchField,
+                resultMessage,
+                scroll
+        );
+
         searchMovies(searchField.getText());
+
         return root;
+    }
+
+    /**
+     * Updates the Search screen from the shared top search field.
+     */
+    public void setQuery(String query) {
+        if (searchField == null) {
+            return;
+        }
+
+        String newQuery = query == null ? "" : query;
+
+        if (!searchField.getText().equals(newQuery)) {
+            searchField.setText(newQuery);
+        }
     }
 
     private void searchMovies(String text) {
         results.getChildren().clear();
-        String query = text == null ? "" : text.trim().toLowerCase();
-        List<Movie> matches = MovieData.getAllMovies().stream()
-                .filter(movie -> query.isEmpty()
-                        || movie.getTitle().toLowerCase().contains(query)
-                        || movie.getDescription().toLowerCase().contains(query)
-                        || movie.getCategory().getDisplayName().toLowerCase().contains(query))
+
+        String query = text == null
+                ? ""
+                : text.trim().toLowerCase(Locale.ROOT);
+
+        List<Movie> matches = MovieData.getAllMovies()
+                .stream()
+                .filter(movie -> {
+
+                    String title = movie.getTitle() == null
+                            ? ""
+                            : movie.getTitle().toLowerCase(Locale.ROOT);
+
+                    String description = movie.getDescription() == null
+                            ? ""
+                            : movie.getDescription().toLowerCase(Locale.ROOT);
+
+                    String genre = movie.getCategory() == null
+                            ? ""
+                            : movie.getCategory()
+                                    .getDisplayName()
+                                    .toLowerCase(Locale.ROOT);
+
+                    return query.isEmpty()
+                            || title.contains(query)
+                            || description.contains(query)
+                            || genre.contains(query);
+                })
                 .toList();
-        for (Movie movie : matches) results.getChildren().add(new MovieCard().create(movie));
-        resultMessage.setText(matches.size() + (matches.size() == 1 ? " movie found." : " movies found."));
-        if (matches.isEmpty()) resultMessage.setText("No matching movies. Try another title or genre.");
+
+        for (Movie movie : matches) {
+            results.getChildren().add(
+                    new MovieCard().create(movie)
+            );
+        }
+
+        if (matches.isEmpty()) {
+            resultMessage.setText(
+                    "No matching movies. Try another title or genre."
+            );
+        } else {
+            resultMessage.setText(
+                    matches.size()
+                            + (matches.size() == 1
+                            ? " movie found."
+                            : " movies found.")
+            );
+        }
     }
 }

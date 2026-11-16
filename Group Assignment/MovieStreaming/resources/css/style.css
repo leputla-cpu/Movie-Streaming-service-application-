@@ -1,73 +1,94 @@
 
-/* =========================================
-   WATCH Z - GLOBAL STYLING
-========================================= */
+/* =========================================================
+   WATCH Z - COMPLETE APPLICATION STYLESHEET
+   Theme: Dark Cinema / Red Accent
+========================================================= */
+
+
+/* =========================================================
+   1. GLOBAL
+========================================================= */
 
 .root {
-    -fx-background-color: #141414;
+    -fx-background-color: #101014;
     -fx-font-family: "Arial";
 }
 
-
-/* =========================================
-   MAIN APPLICATION LAYOUT
-========================================= */
-
-.main-root {
-    -fx-background-color: #141414;
-}
-
+.application-layout,
+.home-shell,
+.home-main-area,
+.main-root,
 .home-content {
-    -fx-background-color: #141414;
+    -fx-background-color: #101014;
 }
 
-.main-scroll {
-    -fx-background-color: #141414;
-    -fx-background: #141414;
+.page-content-holder {
+    -fx-background-color: #101014;
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+}
+
+
+/* =========================================================
+   2. SCROLL PANES
+========================================================= */
+
+.main-scroll,
+.screen-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
     -fx-border-color: transparent;
+    -fx-padding: 0;
 }
 
-.main-scroll > .viewport {
-    -fx-background-color: #141414;
+.main-scroll > .viewport,
+.screen-scroll > .viewport {
+    -fx-background-color: #101014;
 }
 
-.main-scroll .scroll-bar:vertical {
-    -fx-background-color: #141414;
+.main-scroll .scroll-bar:vertical,
+.screen-scroll .scroll-bar:vertical {
+    -fx-background-color: #101014;
     -fx-pref-width: 9px;
 }
 
-.main-scroll .scroll-bar:vertical .thumb {
-    -fx-background-color: #555555;
-    -fx-background-radius: 5px;
+.main-scroll .scroll-bar:vertical .track,
+.screen-scroll .scroll-bar:vertical .track {
+    -fx-background-color: #1b1b22;
 }
 
-.main-scroll .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #777777;
+.main-scroll .scroll-bar:vertical .thumb,
+.screen-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #484851;
+    -fx-background-radius: 8px;
 }
 
-.main-scroll .scroll-bar:vertical .track {
-    -fx-background-color: #1c1c1c;
+.main-scroll .scroll-bar:vertical .thumb:hover,
+.screen-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #F20D27;
 }
 
-.main-scroll .scroll-bar:vertical .increment-button,
-.main-scroll .scroll-bar:vertical .decrement-button {
+.main-scroll .scroll-bar .increment-button,
+.main-scroll .scroll-bar .decrement-button,
+.screen-scroll .scroll-bar .increment-button,
+.screen-scroll .scroll-bar .decrement-button {
     -fx-background-color: transparent;
     -fx-padding: 0;
 }
 
 
-/* =========================================
-   APPLICATION BRANDING
-========================================= */
+/* =========================================================
+   3. BRANDING
+========================================================= */
 
 .title {
-    -fx-text-fill: #E50914;
+    -fx-text-fill: #F20D27;
     -fx-font-size: 36px;
     -fx-font-weight: bold;
 }
 
 .subtitle {
-    -fx-text-fill: #B3B3B3;
+    -fx-text-fill: #B3B3BE;
     -fx-font-size: 15px;
 }
 
@@ -78,551 +99,17 @@
 }
 
 .footer {
-    -fx-text-fill: #777777;
+    -fx-text-fill: #777783;
     -fx-font-size: 12px;
 }
 
 
-/* =========================================
-   NAVIGATION BAR
-========================================= */
-
-.navigation-bar {
-    -fx-background-color: #141414;
-    -fx-padding: 15px 35px;
-    -fx-spacing: 25px;
-}
-
-.brand {
-    -fx-text-fill: #E50914;
-    -fx-font-size: 25px;
-    -fx-font-weight: bold;
-}
-
-.nav-link {
-    -fx-text-fill: #E5E5E5;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-.nav-link:hover {
-    -fx-text-fill: white;
-}
-
-.search-field {
-    -fx-background-color: #292929;
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: #999999;
-    -fx-background-radius: 5px;
-    -fx-border-color: #444444;
-    -fx-border-radius: 5px;
-    -fx-padding: 9px 12px;
-}
-
-.search-field:focused {
-    -fx-border-color: #E50914;
-}
-
-.profile-label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 8px 12px;
-    -fx-background-color: #333333;
-    -fx-background-radius: 5px;
-}
-
-
-/* =========================================
-   FEATURED MOVIE BANNER
-========================================= */
-
-.featured-movie {
-    -fx-background-color: #202020;
-    -fx-background-radius: 10px;
-    -fx-border-radius: 10px;
-
-    -fx-min-height: 300px;
-    -fx-pref-height: 380px;
-
-    -fx-max-width: 100000px;
-
-    -fx-overflow: hidden;
-}
-
-.featured-background {
-    -fx-opacity: 0.38;
-}
-
-.featured-title {
-    -fx-text-fill: white;
-    -fx-font-size: 36px;
-    -fx-font-weight: bold;
-}
-
-.featured-details {
-    -fx-text-fill: #D0D0D0;
-    -fx-font-size: 14px;
-}
-
-.featured-description {
-    -fx-text-fill: #E5E5E5;
-    -fx-font-size: 14px;
-    -fx-line-spacing: 3px;
-}
-
-
-/* =========================================
-   CUSTOM BUTTONS
-========================================= */
-
-.custom-button {
-    -fx-padding: 11px 22px;
-    -fx-background-radius: 5px;
-    -fx-cursor: hand;
-}
-
-.custom-button-text {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-.primary-button {
-    -fx-background-color: #E50914;
-}
-
-.primary-button .custom-button-text {
-    -fx-text-fill: white;
-}
-
-.primary-button:hover {
-    -fx-background-color: #B20710;
-}
-
-.secondary-button {
-    -fx-background-color: #555555;
-}
-
-.secondary-button .custom-button-text {
-    -fx-text-fill: white;
-}
-
-.secondary-button:hover {
-    -fx-background-color: #777777;
-}
-
-
-/* =========================================
-   MOVIE CATEGORY CARDS
-========================================= */
-
-.category-card {
-    -fx-background-color: #242424;
-    -fx-background-radius: 10px;
-    -fx-padding: 16px 22px;
-    -fx-min-width: 350px;
-    -fx-max-width: 350px;
-    -fx-cursor: hand;
-}
-
-.category-card:hover {
-    -fx-background-color: #333333;
-}
-
-.category-name {
-    -fx-text-fill: white;
-    -fx-font-size: 17px;
-    -fx-font-weight: bold;
-}
-
-.category-count {
-    -fx-text-fill: #E50914;
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-}
-
-
-/* =========================================
-   MOVIE ROWS
-========================================= */
-
-.movie-row-section {
-    -fx-spacing: 12px;
-    -fx-max-width: 100000px;
-}
-
-.movie-row-heading {
-    -fx-text-fill: white;
-    -fx-font-size: 21px;
-    -fx-font-weight: bold;
-}
-
-
-/* =========================================
-   MOVIE HORIZONTAL SCROLLING
-========================================= */
-
-.movie-horizontal-scroll {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-    -fx-border-color: transparent;
-    -fx-padding: 0;
-    -fx-max-width: 100000px;
-}
-
-.movie-horizontal-scroll > .viewport {
-    -fx-background-color: transparent;
-}
-
-.movie-horizontal-scroll .scroll-bar:horizontal {
-    -fx-background-color: #202020;
-    -fx-pref-height: 7px;
-}
-
-.movie-horizontal-scroll .scroll-bar:horizontal .thumb {
-    -fx-background-color: #555555;
-    -fx-background-radius: 5px;
-}
-
-.movie-horizontal-scroll .scroll-bar:horizontal .thumb:hover {
-    -fx-background-color: #E50914;
-}
-
-.movie-horizontal-scroll .scroll-bar:horizontal .track {
-    -fx-background-color: #252525;
-    -fx-background-radius: 5px;
-}
-
-.movie-horizontal-scroll .scroll-bar:horizontal .increment-button,
-.movie-horizontal-scroll .scroll-bar:horizontal .decrement-button {
-    -fx-background-color: transparent;
-    -fx-padding: 0;
-}
-
-
-/* =========================================
-   MOVIE CARDS
-========================================= */
-
-.movie-card {
-    -fx-background-color: transparent;
-    -fx-padding: 0;
-    -fx-spacing: 8px;
-}
-
-.movie-card:hover {
-    -fx-effect: dropshadow(
-        gaussian,
-        rgba(0, 0, 0, 0.55),
-        12,
-        0.2,
-        0,
-        4
-    );
-}
-
-.poster-container {
-    -fx-background-color: #242424;
-    -fx-background-radius: 6px;
-    -fx-border-radius: 6px;
-    -fx-overflow: hidden;
-}
-
-.movie-poster {
-    -fx-background-color: #242424;
-}
-
-.movie-card-title {
-    -fx-text-fill: #E5E5E5;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-wrap-text: true;
-}
-
-.movie-card:hover .movie-card-title {
-    -fx-text-fill: white;
-}
-
-
-/* =========================================
-   SHARED SCREEN STYLING
-========================================= */
-
-.movie-details-screen,
-.player-screen,
-.search-screen,
-.my-list-screen {
-    -fx-background-color: #141414;
-}
-
-.screen-content {
-    -fx-background-color: #141414;
-    -fx-padding: 30px 35px;
-}
-
-.screen-heading {
-    -fx-text-fill: white;
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-}
-
-.screen-subheading {
-    -fx-text-fill: #B3B3B3;
-    -fx-font-size: 15px;
-}
-
-.screen-back {
-    -fx-text-fill: #B3B3B3;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-.screen-back:hover {
-    -fx-text-fill: #E50914;
-}
-
-
-/* =========================================
-   MOVIE DETAILS SCREEN
-========================================= */
-
-.movie-details-screen {
-    -fx-background-color: #141414;
-}
-
-.details-poster-container {
-    -fx-background-color: #242424;
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-}
-
-.details-poster {
-    -fx-background-color: #242424;
-}
-
-.details-title {
-    -fx-text-fill: white;
-    -fx-font-size: 34px;
-    -fx-font-weight: bold;
-}
-
-.player-details {
-    -fx-text-fill: #B3B3B3;
-    -fx-font-size: 14px;
-}
-
-.player-description {
-    -fx-text-fill: #D0D0D0;
-    -fx-font-size: 15px;
-    -fx-line-spacing: 4px;
-}
-
-.details-category {
-    -fx-text-fill: #E50914;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-
-/* =========================================
-   PLAYER SCREEN
-========================================= */
-
-.player-screen {
-    -fx-background-color: #141414;
-}
-
-.player-title {
-    -fx-text-fill: white;
-    -fx-font-size: 25px;
-    -fx-font-weight: bold;
-}
-
-.player-back {
-    -fx-text-fill: #B3B3B3;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-.player-back:hover {
-    -fx-text-fill: #E50914;
-}
-
-.video-container {
-    -fx-background-color: black;
-    -fx-background-radius: 5px;
-    -fx-border-color: #292929;
-    -fx-border-radius: 5px;
-}
-
-.video-container .web-view {
-    -fx-background-color: black;
-}
-
-
-/* =========================================
-   SEARCH SCREEN
-========================================= */
-
-.search-screen {
-    -fx-background-color: #141414;
-}
-
-.search-heading {
-    -fx-text-fill: white;
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-}
-
-.search-field {
-    -fx-background-color: #292929;
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: #999999;
-    -fx-background-radius: 5px;
-    -fx-border-color: #444444;
-    -fx-border-radius: 5px;
-    -fx-padding: 11px 14px;
-    -fx-font-size: 14px;
-}
-
-.search-field:focused {
-    -fx-border-color: #E50914;
-}
-
-.search-results {
-    -fx-background-color: transparent;
-}
-
-.search-message {
-    -fx-text-fill: #B3B3B3;
-    -fx-font-size: 14px;
-}
-
-
-/* =========================================
-   MY LIST SCREEN
-========================================= */
-
-.my-list-screen {
-    -fx-background-color: #141414;
-}
-
-.my-list-heading {
-    -fx-text-fill: white;
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-}
-
-.my-list-empty {
-    -fx-text-fill: #999999;
-    -fx-font-size: 16px;
-}
-
-.my-list-container {
-    -fx-background-color: transparent;
-}
-
-
-/* =========================================
-   SCREEN SCROLLING
-========================================= */
-
-.screen-scroll {
-    -fx-background-color: #141414;
-    -fx-background: #141414;
-    -fx-border-color: transparent;
-}
-
-.screen-scroll > .viewport {
-    -fx-background-color: #141414;
-}
-
-.screen-scroll .scroll-bar:vertical {
-    -fx-background-color: #141414;
-    -fx-pref-width: 9px;
-}
-
-.screen-scroll .scroll-bar:vertical .thumb {
-    -fx-background-color: #555555;
-    -fx-background-radius: 5px;
-}
-
-.screen-scroll .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #E50914;
-}
-
-.screen-scroll .scroll-bar:vertical .track {
-    -fx-background-color: #1c1c1c;
-}
-
-
-/* =========================================
-   NAVIGATION ACTIVE STATE
-========================================= */
-
-.nav-link-active {
-    -fx-text-fill: #E50914;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-.nav-link-active:hover {
-    -fx-text-fill: #E50914;
-}
-
-
-/* =========================================
-   EMPTY AND UNAVAILABLE STATES
-========================================= */
-
-.empty-state-title {
-    -fx-text-fill: white;
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-}
-
-.empty-state-description {
-    -fx-text-fill: #999999;
-    -fx-font-size: 14px;
-}
-
-
-/* =========================================
-   PROFILE LABEL
-========================================= */
-
-.profile-label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 8px 12px;
-    -fx-background-color: #333333;
-    -fx-background-radius: 5px;
-    -fx-cursor: hand;
-}
-
-.profile-label:hover {
-    -fx-background-color: #E50914;
-}
-
-
-/* =========================================
-   WATCH Z HOME - FIXED LEFT SIDEBAR LAYOUT
-========================================= */
-
-.home-shell,
-.application-layout,
-.home-main-area {
-    -fx-background-color: #101014;
-}
-
-.application-layout {
-    -fx-spacing: 0;
-}
+/* =========================================================
+   4. APPLICATION SIDEBAR
+========================================================= */
 
 .sidebar {
-    -fx-background-color: #17171d;
+    -fx-background-color: #17171D;
     -fx-padding: 28px 15px 22px 15px;
     -fx-border-color: transparent #292932 transparent transparent;
     -fx-border-width: 0 1px 0 0;
@@ -658,6 +145,8 @@
 .sidebar-link {
     -fx-background-color: transparent;
     -fx-background-radius: 8px;
+    -fx-padding: 12px 14px 12px 16px;
+    -fx-min-height: 42px;
     -fx-cursor: hand;
 }
 
@@ -671,20 +160,16 @@
     -fx-border-width: 0 0 0 3px;
 }
 
-.sidebar-link-icon {
-    -fx-text-fill: #A8A8B2;
-    -fx-font-size: 17px;
-    -fx-min-width: 19px;
-    -fx-alignment: center;
-}
-
 .sidebar-link-text {
     -fx-text-fill: #D5D5DC;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
 }
 
-.sidebar-link-active .sidebar-link-icon,
+.sidebar-link:hover .sidebar-link-text {
+    -fx-text-fill: white;
+}
+
 .sidebar-link-active .sidebar-link-text {
     -fx-text-fill: white;
 }
@@ -707,8 +192,14 @@
     -fx-line-spacing: 2px;
 }
 
+
+/* =========================================================
+   5. TOP BAR
+========================================================= */
+
 .home-top-bar {
     -fx-background-color: #141419;
+    -fx-padding: 16px 28px;
     -fx-border-color: transparent transparent #292932 transparent;
     -fx-border-width: 0 0 1px 0;
 }
@@ -718,6 +209,38 @@
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }
+
+
+/* =========================================================
+   6. SEARCH FIELDS
+========================================================= */
+
+.search-field {
+    -fx-background-color: #24242D;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #858590;
+    -fx-background-radius: 7px;
+    -fx-border-color: #393943;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1px;
+    -fx-padding: 10px 14px;
+    -fx-font-size: 13px;
+}
+
+.search-field:hover {
+    -fx-border-color: #555560;
+}
+
+.search-field:focused {
+    -fx-background-color: #292932;
+    -fx-border-color: #F20D27;
+    -fx-border-width: 1.5px;
+}
+
+
+/* =========================================================
+   7. HOME CONTENT
+========================================================= */
 
 .home-content {
     -fx-background-color: #101014;
@@ -753,15 +276,256 @@
     -fx-spacing: 24px;
 }
 
-/* =========================================
-   SHARED APPLICATION SHELL AND PAGE LAYOUT
-========================================= */
 
-.page-content-holder {
-    -fx-background-color: #101014;
-    -fx-min-width: 0;
-    -fx-min-height: 0;
+/* =========================================================
+   8. FEATURED MOVIE BANNER
+========================================================= */
+
+.featured-movie {
+    -fx-background-color: #202027;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-min-height: 300px;
+    -fx-pref-height: 380px;
+    -fx-max-width: 100000px;
 }
+
+.featured-background {
+    -fx-opacity: 0.38;
+}
+
+.featured-title {
+    -fx-text-fill: white;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+}
+
+.featured-details {
+    -fx-text-fill: #D0D0D8;
+    -fx-font-size: 14px;
+}
+
+.featured-description {
+    -fx-text-fill: #E5E5E5;
+    -fx-font-size: 14px;
+    -fx-line-spacing: 3px;
+}
+
+.featured-video-shade {
+    -fx-background-color: linear-gradient(
+        to right,
+        rgba(8, 13, 23, 0.96) 0%,
+        rgba(8, 13, 23, 0.76) 48%,
+        rgba(8, 13, 23, 0.18) 100%
+    );
+}
+
+
+/* =========================================================
+   9. BUTTONS
+========================================================= */
+
+.custom-button {
+    -fx-padding: 11px 22px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+}
+
+.custom-button-text {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.primary-button {
+    -fx-background-color: #F20D27;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.primary-button .custom-button-text {
+    -fx-text-fill: white;
+}
+
+.primary-button:hover {
+    -fx-background-color: #D20B22;
+    -fx-effect: dropshadow(gaussian, rgba(242, 13, 39, 0.25), 10, 0.2, 0, 2);
+}
+
+.primary-button:pressed {
+    -fx-background-color: #A9081B;
+}
+
+.secondary-button {
+    -fx-background-color: #303039;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.secondary-button .custom-button-text {
+    -fx-text-fill: #FFFFFF;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #454550;
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #24242B;
+}
+
+.danger-button {
+    -fx-background-color: #8F1725;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.danger-button:hover {
+    -fx-background-color: #B51B2D;
+}
+
+
+/* =========================================================
+   10. CATEGORY CARDS
+========================================================= */
+
+.category-card {
+    -fx-background-color: #24242D;
+    -fx-background-radius: 10px;
+    -fx-padding: 16px 22px;
+    -fx-min-width: 0;
+    -fx-cursor: hand;
+}
+
+.category-card:hover {
+    -fx-background-color: #33333E;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 10, 0.2, 0, 3);
+}
+
+.category-name {
+    -fx-text-fill: white;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.category-count {
+    -fx-text-fill: #F20D27;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+
+/* =========================================================
+   11. MOVIE ROWS
+========================================================= */
+
+.movie-row-section {
+    -fx-spacing: 12px;
+    -fx-max-width: 100000px;
+}
+
+.movie-row-heading {
+    -fx-text-fill: white;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+}
+
+.movie-row-count {
+    -fx-text-fill: #858590;
+    -fx-font-size: 11px;
+}
+
+
+/* =========================================================
+   12. HORIZONTAL MOVIE SCROLLING
+========================================================= */
+
+.movie-horizontal-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-max-width: 100000px;
+}
+
+.movie-horizontal-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.movie-horizontal-scroll .scroll-bar:horizontal {
+    -fx-background-color: #202027;
+    -fx-pref-height: 7px;
+}
+
+.movie-horizontal-scroll .scroll-bar:horizontal .thumb {
+    -fx-background-color: #555560;
+    -fx-background-radius: 5px;
+}
+
+.movie-horizontal-scroll .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #F20D27;
+}
+
+.movie-horizontal-scroll .scroll-bar:horizontal .track {
+    -fx-background-color: #25252D;
+    -fx-background-radius: 5px;
+}
+
+.movie-horizontal-scroll .scroll-bar:horizontal .increment-button,
+.movie-horizontal-scroll .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+
+/* =========================================================
+   13. MOVIE CARDS
+========================================================= */
+
+.movie-card {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-spacing: 8px;
+    -fx-cursor: hand;
+}
+
+.movie-card:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(0, 0, 0, 0.55),
+        12,
+        0.2,
+        0,
+        4
+    );
+}
+
+.poster-container {
+    -fx-background-color: #24242D;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+}
+
+.movie-poster {
+    -fx-background-color: #24242D;
+}
+
+.movie-card-title {
+    -fx-text-fill: #D5D5DC;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+}
+
+.movie-card:hover .movie-card-title {
+    -fx-text-fill: white;
+}
+
+
+/* =========================================================
+   14. SHARED SCREEN STYLING
+========================================================= */
 
 .screen-content {
     -fx-background-color: #101014;
@@ -769,7 +533,7 @@
 }
 
 .screen-heading {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: white;
     -fx-font-size: 29px;
     -fx-font-weight: bold;
 }
@@ -779,9 +543,125 @@
     -fx-font-size: 13px;
 }
 
+.screen-back,
+.player-back {
+    -fx-text-fill: #B3B3BE;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.screen-back:hover,
+.player-back:hover {
+    -fx-text-fill: #F20D27;
+}
+
+
+/* =========================================================
+   15. MOVIE DETAILS SCREEN
+========================================================= */
+
+.movie-details-screen {
+    -fx-background-color: #101014;
+}
+
+.details-poster-container {
+    -fx-background-color: #24242D;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.details-poster {
+    -fx-background-color: #24242D;
+}
+
+.details-title {
+    -fx-text-fill: white;
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+.details-category {
+    -fx-text-fill: #F20D27;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.player-details {
+    -fx-text-fill: #B3B3BE;
+    -fx-font-size: 13px;
+}
+
+.player-description {
+    -fx-text-fill: #D0D0D8;
+    -fx-font-size: 14px;
+    -fx-line-spacing: 4px;
+}
+
+
+/* =========================================================
+   16. PLAYER SCREEN
+========================================================= */
+
+.player-screen {
+    -fx-background-color: #101014;
+}
+
+.player-title {
+    -fx-text-fill: white;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+}
+
+.video-container {
+    -fx-background-color: #000000;
+    -fx-background-radius: 7px;
+    -fx-border-color: #292932;
+    -fx-border-radius: 7px;
+}
+
+.video-container .web-view {
+    -fx-background-color: black;
+}
+
+
+/* =========================================================
+   17. SEARCH SCREEN
+========================================================= */
+
+.search-screen {
+    -fx-background-color: #101014;
+}
+
+.search-heading {
+    -fx-text-fill: white;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
 .search-message {
     -fx-text-fill: #A6A6B0;
-    -fx-font-size: 12px;
+    -fx-font-size: 13px;
+    -fx-padding: 3px 0;
+}
+
+.search-results {
+    -fx-background-color: transparent;
+}
+
+
+/* =========================================================
+   18. MY LIST SCREEN
+========================================================= */
+
+.my-list-screen {
+    -fx-background-color: #101014;
+}
+
+.my-list-heading {
+    -fx-text-fill: white;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
 }
 
 .my-list-empty {
@@ -790,33 +670,72 @@
     -fx-padding: 20px 4px;
 }
 
-.movie-row-count {
-    -fx-text-fill: #777783;
-    -fx-font-size: 11px;
+.my-list-container {
+    -fx-background-color: transparent;
 }
 
-/* Sidebar navigation uses text-only placeholders until the group's image icons are ready. */
-.sidebar-link {
-    -fx-min-height: 42px;
-}
 
-.sidebar-link-text {
-    -fx-text-fill: #D5D5DC;
-    -fx-font-size: 13px;
+/* =========================================================
+   19. EMPTY STATES
+========================================================= */
+
+.empty-state-title {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
 }
 
-.sidebar-link-active .sidebar-link-text {
-    -fx-text-fill: #FFFFFF;
+.empty-state-description {
+    -fx-text-fill: #9999A4;
+    -fx-font-size: 14px;
 }
 
-.sidebar-link-active {
-    -fx-background-color: #342027;
-    -fx-border-color: transparent transparent transparent #F20D27;
-    -fx-border-width: 0 0 0 3px;
+
+/* =========================================================
+   20. PROFILE LABEL
+========================================================= */
+
+.profile-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 12px;
+    -fx-background-color: #303039;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
 }
 
-/* Trailer loading animation */
+.profile-label:hover {
+    -fx-background-color: #F20D27;
+}
+
+
+/* =========================================================
+   21. BACK BUTTON
+========================================================= */
+
+.topbar-back-button {
+    -fx-text-fill: white;
+    -fx-background-color: #26384F;
+    -fx-padding: 9px 15px;
+    -fx-background-radius: 7px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.topbar-back-button:hover {
+    -fx-background-color: #365578;
+}
+
+.topbar-back-button:pressed {
+    -fx-background-color: #1D2C40;
+}
+
+
+/* =========================================================
+   22. LOADING ANIMATION
+========================================================= */
+
 .loading-overlay {
     -fx-background-color: rgba(12, 12, 16, 0.94);
 }
@@ -830,31 +749,28 @@
     -fx-font-size: 13px;
 }
 
-/* Smoothly rounded poster cards and screen content */
-.poster-container {
-    -fx-background-radius: 7px;
-    -fx-border-radius: 7px;
+
+/* =========================================================
+   23. GENERAL LABELS AND INTERACTION
+========================================================= */
+
+.label {
+    -fx-font-smoothing-type: gray;
 }
 
-.movie-card-title {
-    -fx-max-width: 130px;
+.text-field {
+    -fx-highlight-fill: #F20D27;
+    -fx-highlight-text-fill: white;
 }
 
-
-
-/* Shared Back navigation control */
-.topbar-back-button {
-    -fx-text-fill: #ffffff;
-    -fx-background-color: #26384f;
-    -fx-padding: 9 15 9 15;
-    -fx-background-radius: 7;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
-.topbar-back-button:hover {
-    -fx-background-color: #365578;
+.button {
+    -fx-cursor: hand;
 }
 
-.featured-video-shade {
-    -fx-background-color: linear-gradient(to right, rgba(8, 13, 23, 0.96) 0%, rgba(8, 13, 23, 0.76) 48%, rgba(8, 13, 23, 0.18) 100%);
+.separator {
+    -fx-background-color: #292932;
+}
+
+.separator .line {
+    -fx-border-color: #292932;
 }

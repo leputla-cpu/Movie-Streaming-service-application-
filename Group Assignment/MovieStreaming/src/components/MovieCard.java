@@ -1,6 +1,8 @@
 
 package components;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -23,14 +25,20 @@ public class MovieCard {
     private final NavigationService navigationService =
             new NavigationService();
 
+    // Default method retained for compatibility with existing code.
     public VBox create(Movie movie) {
+        return create(movie, new SimpleDoubleProperty(CARD_WIDTH));
+    }
+
+    // Responsive method: receives its width from MovieRow.
+    public VBox create(Movie movie, DoubleProperty responsiveWidth) {
 
         VBox card = new VBox(8);
         card.setAlignment(Pos.TOP_LEFT);
 
-        card.setMinWidth(CARD_WIDTH);
-        card.setPrefWidth(CARD_WIDTH);
-        card.setMaxWidth(CARD_WIDTH);
+        card.minWidthProperty().bind(responsiveWidth);
+        card.prefWidthProperty().bind(responsiveWidth);
+        card.maxWidthProperty().bind(responsiveWidth);
 
         card.getStyleClass().add("movie-card");
         card.setCursor(Cursor.HAND);
@@ -44,38 +52,56 @@ public class MovieCard {
             poster.setImage(ImageLoader.load(imageUrl));
         }
 
-        poster.setFitWidth(CARD_WIDTH);
-        poster.setFitHeight(POSTER_HEIGHT);
+        poster.fitWidthProperty().bind(responsiveWidth);
+
+        poster.fitHeightProperty().bind(
+                responsiveWidth.multiply(POSTER_HEIGHT / CARD_WIDTH)
+        );
+
         poster.setPreserveRatio(false);
+        poster.setSmooth(true);
         poster.getStyleClass().add("movie-poster");
 
-        // Poster container
+        // Responsive poster container
         StackPane posterContainer = new StackPane(poster);
 
-        posterContainer.setMinWidth(CARD_WIDTH);
-        posterContainer.setPrefWidth(CARD_WIDTH);
-        posterContainer.setMaxWidth(CARD_WIDTH);
+        posterContainer.minWidthProperty().bind(responsiveWidth);
+        posterContainer.prefWidthProperty().bind(responsiveWidth);
+        posterContainer.maxWidthProperty().bind(responsiveWidth);
 
-        posterContainer.setMinHeight(POSTER_HEIGHT);
-        posterContainer.setPrefHeight(POSTER_HEIGHT);
-        posterContainer.setMaxHeight(POSTER_HEIGHT);
+        posterContainer.minHeightProperty().bind(
+                responsiveWidth.multiply(POSTER_HEIGHT / CARD_WIDTH)
+        );
+
+        posterContainer.prefHeightProperty().bind(
+                responsiveWidth.multiply(POSTER_HEIGHT / CARD_WIDTH)
+        );
+
+        posterContainer.maxHeightProperty().bind(
+                responsiveWidth.multiply(POSTER_HEIGHT / CARD_WIDTH)
+        );
 
         posterContainer.getStyleClass().add("poster-container");
 
-        // Movie title
+        // Responsive movie title
         Label title = new Label(movie.getTitle());
         title.setWrapText(true);
-        title.setMaxWidth(CARD_WIDTH);
+        title.maxWidthProperty().bind(responsiveWidth);
+        title.prefWidthProperty().bind(responsiveWidth);
         title.getStyleClass().add("movie-card-title");
 
         card.getChildren().addAll(
-            posterContainer,
-            title
+                posterContainer,
+                title
         );
 
-        // Shared hover animation and optional interface sound.
+        // Shared hover animation and interface sound.
         HoverAnimation.apply(card);
-        card.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> SoundManager.playHover());
+
+        card.addEventHandler(
+                MouseEvent.MOUSE_ENTERED,
+                event -> SoundManager.playHover()
+        );
 
         // Open movie details when clicked.
         card.setOnMouseClicked(event -> {
