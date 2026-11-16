@@ -72,14 +72,6 @@ The application loads its stylesheet from `resources/css/style.css` and movie po
 | External styling | Shared CSS stylesheet in `resources/css/style.css` |
 | Navigation | Persistent sidebar routes to distinct application screens |
 
-## Notes
-
-- My List is currently held in memory and resets when the application closes; persistent storage was not specified in the current project setup.
-- Some movie entries use a YouTube search reference when a direct trailer ID is not supplied. These open the YouTube results page inside the in-app WebView.
-- Replace the text-only sidebar labels with the group's chosen image icons when those assets are ready. No emoji characters are used in the interface.
-
-
 ## Trailer links and navigation
 Each movie stores a direct YouTube embed URL in its `Movie` record. The player does not search YouTube. To assign a trailer, set the movie's trailer value in `MovieData.java` to an 11-character YouTube video ID or a full `https://www.youtube.com/embed/VIDEO_ID` URL. The featured banner uses a muted preview when an embed URL is assigned; **Play Trailer** opens the full player. A shared **Back** control returns to the previous screen.
 
-Some catalogue entries still have no trailer configured; those entries display an unavailable message instead of performing a search. Add a verified official trailer embed URL for each of those entries in `MovieData.java`.
