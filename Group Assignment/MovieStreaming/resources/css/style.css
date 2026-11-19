@@ -205,7 +205,7 @@
 }
 
 .topbar-page-label {
-    -fx-text-fill: #777783;
+    -fx-text-fill: #d40808;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }
@@ -220,7 +220,7 @@
     -fx-text-fill: #FFFFFF;
     -fx-prompt-text-fill: #858590;
     -fx-background-radius: 7px;
-    -fx-border-color: #393943;
+    -fx-border-color: #2e2e55;
     -fx-border-radius: 7px;
     -fx-border-width: 1px;
     -fx-padding: 10px 14px;

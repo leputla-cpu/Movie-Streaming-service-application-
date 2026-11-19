@@ -163,7 +163,7 @@ public class AppShell {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         TextField search = new TextField();
-        search.setPromptText("Search movies...");
+        search.setPromptText("Search movies here...");
         search.setPrefWidth(235);
         search.getStyleClass().add("search-field");
 
