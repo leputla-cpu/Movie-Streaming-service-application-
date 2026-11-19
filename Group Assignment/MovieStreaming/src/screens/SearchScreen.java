@@ -7,21 +7,19 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import models.Movie;
 
 import java.util.List;
 import java.util.Locale;
 
-/** Live search across movie titles, descriptions and genre names. */
+/** Displays live search results from the shared top-bar search field. */
 public class SearchScreen {
 
     private final FlowPane results = new FlowPane();
     private final Label resultMessage = new Label();
-
-    private TextField searchField;
 
     public VBox create() {
         return create("");
@@ -32,27 +30,13 @@ public class SearchScreen {
         root.setPadding(new Insets(28, 30, 35, 30));
         root.getStyleClass().add("screen-content");
 
-        Label heading = new Label("Search Movies");
+        Label heading = new Label("Search Results");
         heading.getStyleClass().add("screen-heading");
 
         Label subtitle = new Label(
-                "Search by title, story description or genre."
+                "Browse movies matching your search."
         );
         subtitle.getStyleClass().add("screen-subheading");
-
-        searchField = new TextField();
-        searchField.setPromptText("Type a movie title or genre...");
-        searchField.setMaxWidth(560);
-        searchField.getStyleClass().add("search-field");
-
-        searchField.setText(
-                initialQuery == null ? "" : initialQuery
-        );
-
-        searchField.textProperty().addListener(
-                (observable, oldValue, newValue) ->
-                        searchMovies(newValue)
-        );
 
         results.setHgap(19);
         results.setVgap(25);
@@ -67,34 +51,25 @@ public class SearchScreen {
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll.getStyleClass().add("main-scroll");
 
-        VBox.setVgrow(scroll, javafx.scene.layout.Priority.ALWAYS);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
 
         root.getChildren().addAll(
                 heading,
                 subtitle,
-                searchField,
                 resultMessage,
                 scroll
         );
 
-        searchMovies(searchField.getText());
+        searchMovies(initialQuery);
 
         return root;
     }
 
     /**
-     * Updates the Search screen from the shared top search field.
+     * Updates the results using text from the shared top-bar search field.
      */
     public void setQuery(String query) {
-        if (searchField == null) {
-            return;
-        }
-
-        String newQuery = query == null ? "" : query;
-
-        if (!searchField.getText().equals(newQuery)) {
-            searchField.setText(newQuery);
-        }
+        searchMovies(query);
     }
 
     private void searchMovies(String text) {
@@ -135,7 +110,11 @@ public class SearchScreen {
             );
         }
 
-        if (matches.isEmpty()) {
+        if (query.isEmpty()) {
+            resultMessage.setText(
+                    matches.size() + " movies available. Search using the top bar."
+            );
+        } else if (matches.isEmpty()) {
             resultMessage.setText(
                     "No matching movies. Try another title or genre."
             );

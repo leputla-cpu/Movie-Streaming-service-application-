@@ -774,3 +774,138 @@
 .separator .line {
     -fx-border-color: #292932;
 }
+
+
+/* =========================================
+   WATCH Z - MEDIA PLAYER CONTROLS
+========================================= */
+
+.player-controls-bar {
+    -fx-background-color: #17171f;
+    -fx-background-radius: 12px;
+    -fx-border-color: #30303b;
+    -fx-border-radius: 12px;
+}
+
+.player-icon-button {
+    -fx-background-color: #252530;
+    -fx-background-radius: 9px;
+    -fx-border-color: #393945;
+    -fx-border-radius: 9px;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+    -fx-min-width: 43px;
+    -fx-min-height: 43px;
+    -fx-alignment: center;
+}
+
+.player-icon-button:hover {
+    -fx-background-color: #F20D27;
+    -fx-border-color: #F20D27;
+}
+
+.player-icon-button:pressed {
+    -fx-background-color: #B9091D;
+    -fx-border-color: #B9091D;
+}
+
+.player-icon-button:focused {
+    -fx-border-color: #F20D27;
+}
+
+.player-volume-slider {
+    -fx-padding: 0 5px;
+}
+
+.player-volume-slider .track {
+    -fx-background-color: #41414c;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 5px;
+}
+
+.player-volume-slider .thumb {
+    -fx-background-color: #F20D27;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 13px;
+    -fx-pref-height: 13px;
+}
+
+.player-volume-slider .thumb:hover {
+    -fx-background-color: #ff5265;
+}
+
+.player-volume-slider .axis {
+    -fx-tick-label-fill: white;
+}
+
+
+/* =========================================
+   WATCH Z - VLC STYLE PLAYER
+========================================= */
+
+.player-top-bar {
+    -fx-alignment: center;
+    -fx-padding: 8px 4px 16px 4px;
+}
+
+.player-top-bar .player-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-alignment: center;
+}
+
+/* Player control background */
+.player-controls-bar {
+    -fx-background-color: #17171f;
+    -fx-background-radius: 10px;
+    -fx-border-color: #30303b;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+}
+
+/* Custom image controls - Label elements */
+.player-icon-button {
+    -fx-background-color: #252530;
+    -fx-background-radius: 8px;
+    -fx-border-color: #393945;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 9px;
+    -fx-min-width: 42px;
+    -fx-min-height: 42px;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.player-icon-button:hover {
+    -fx-background-color: #F20D27;
+    -fx-border-color: #F20D27;
+}
+
+.player-icon-button:pressed {
+    -fx-background-color: #B9091D;
+    -fx-border-color: #B9091D;
+}
+
+/* Volume slider */
+.player-volume-slider {
+    -fx-padding: 0 5px;
+}
+
+.player-volume-slider .track {
+    -fx-background-color: #41414c;
+    -fx-background-radius: 5px;
+    -fx-pref-height: 5px;
+}
+
+.player-volume-slider .thumb {
+    -fx-background-color: #F20D27;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 13px;
+    -fx-pref-height: 13px;
+}
+
+.player-volume-slider .thumb:hover {
+    -fx-background-color: #ff5265;
+}

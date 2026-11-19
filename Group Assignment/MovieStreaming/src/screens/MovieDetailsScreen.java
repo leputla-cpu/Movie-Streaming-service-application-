@@ -11,11 +11,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class MovieDetailsScreen {
 
@@ -31,10 +38,14 @@ public class MovieDetailsScreen {
         root.getStyleClass().add("movie-details-screen");
         root.setPadding(new Insets(28, 30, 35, 30));
 
-        // Back button
-        Label backButton = new Label("\u2190 Back");
-        backButton.getStyleClass().add("topbar-back-button");
+        // Back icon - same icon used in PlayerScreen.
+        Label backButton = new Label();
+
+        backButton.setGraphic(loadBackIcon());
+        backButton.setTooltip(new Tooltip("Go back"));
+        backButton.getStyleClass().add("player-icon-button");
         backButton.setCursor(Cursor.HAND);
+        backButton.setFocusTraversable(false);
 
         backButton.setOnMouseEntered(event ->
                 SoundManager.playHover()
@@ -61,7 +72,6 @@ public class MovieDetailsScreen {
                 Double.MAX_VALUE
         );
 
-        // Prevent the WebView from intercepting mouse events.
         trailerPreview.setMouseTransparent(true);
 
         StackPane trailerContainer = new StackPane(trailerPreview);
@@ -105,7 +115,7 @@ public class MovieDetailsScreen {
 
         CustomButton buttons = new CustomButton();
 
-        // Actual playback still opens the dedicated player screen.
+        // Actual playback opens the dedicated player screen.
         StackPane watch = buttons.create(
                 "Watch Trailer",
                 "primary-button",
@@ -157,5 +167,84 @@ public class MovieDetailsScreen {
         root.setCenter(main);
 
         return root;
+    }
+
+    /**
+     * Loads the same back.png icon used in PlayerScreen.
+     */
+    private ImageView loadBackIcon() {
+
+        String filename = "back.png";
+
+        Path[] possiblePaths = {
+                Path.of("resources", "images", "icons", filename),
+                Path.of("src", "resources", "images", "icons", filename),
+                Path.of("src", "main", "resources", "images", "icons", filename)
+        };
+
+        for (Path path : possiblePaths) {
+
+            if (Files.isRegularFile(path)) {
+
+                Image image = new Image(
+                        path.toAbsolutePath().toUri().toString(),
+                        23,
+                        23,
+                        true,
+                        true
+                );
+
+                if (!image.isError()) {
+                    return createImageView(image);
+                }
+            }
+        }
+
+        String[] resourcePaths = {
+                "/images/icons/back.png",
+                "/resources/images/icons/back.png"
+        };
+
+        for (String resourcePath : resourcePaths) {
+
+            try (InputStream stream =
+                         getClass().getResourceAsStream(resourcePath)) {
+
+                if (stream != null) {
+
+                    Image image = new Image(
+                            stream,
+                            23,
+                            23,
+                            true,
+                            true
+                    );
+
+                    if (!image.isError()) {
+                        return createImageView(image);
+                    }
+                }
+
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        System.err.println(
+                "Missing back icon: resources/images/icons/back.png"
+        );
+
+        return new ImageView();
+    }
+
+    private ImageView createImageView(Image image) {
+
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(23);
+        imageView.setFitHeight(23);
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+
+        return imageView;
     }
 }

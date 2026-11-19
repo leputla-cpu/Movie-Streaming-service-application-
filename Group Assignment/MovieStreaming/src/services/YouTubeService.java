@@ -14,24 +14,15 @@ import java.util.regex.Pattern;
 
 import javafx.scene.web.WebView;
 
-/**
- * Loads YouTube videos inside JavaFX WebView.
- *
- * A local HTTP server gives the embedded YouTube player a real HTTP origin
- * and allows WebKit to send a Referer header.
- *
- * Supports:
- * - Normal video playback.
- * - Muted featured trailer previews.
- * - JavaScript-controlled play and pause.
- */
 public class YouTubeService {
 
     private static final Pattern VIDEO_ID_PATTERN = Pattern.compile(
             "(?:youtube\\.com/(?:watch\\?(?:.*&)?v=|embed/)|youtu\\.be/)([A-Za-z0-9_-]{11})",
-            Pattern.CASE_INSENSITIVE);
+            Pattern.CASE_INSENSITIVE
+    );
 
-    private static final Pattern RAW_ID_PATTERN = Pattern.compile("^[A-Za-z0-9_-]{11}$");
+    private static final Pattern RAW_ID_PATTERN =
+            Pattern.compile("^[A-Za-z0-9_-]{11}$");
 
     private static LocalPlayerServer localServer;
 
@@ -39,7 +30,7 @@ public class YouTubeService {
 
     public YouTubeService() {
         webView.setContextMenuEnabled(false);
-        webView.setMinSize(0, 300);
+        webView.setMinSize(0, 0);
         webView.setPrefSize(900, 480);
     }
 
@@ -47,84 +38,85 @@ public class YouTubeService {
         return webView;
     }
 
-    /**
-     * Loads a normal YouTube video for the dedicated player screen.
-     */
     public void loadVideo(String youtubeUrl) {
         load(youtubeUrl, false);
     }
 
-    /**
-     * Loads a muted trailer preview for the featured movie banner.
-     * The video does not automatically play until the mouse enters.
-     */
     public void loadPreviewVideo(String youtubeUrl) {
         load(youtubeUrl, true);
     }
 
     private void load(String youtubeUrl, boolean preview) {
+
         String videoId = extractVideoId(youtubeUrl);
 
         if (videoId.isEmpty()) {
             webView.getEngine().loadContent(
-                    "<!DOCTYPE html><html><body style='margin:0;background:#10151f;color:white;"
-                    + "font-family:Arial;display:grid;place-items:center;height:100vh;text-align:center'>"
-                    + "<div>No valid YouTube trailer has been assigned to this movie.</div>"
-                    + "</body></html>");
+                    "<html><body style='background:#080b12;color:white;"
+                    + "font-family:Arial;text-align:center;padding:40px'>"
+                    + "No valid YouTube trailer has been assigned."
+                    + "</body></html>"
+            );
             return;
         }
 
         try {
-            String playerUrl = getLocalPlayerServer().getPlayerUrl(videoId, preview);
+            String playerUrl =
+                    getLocalPlayerServer().getPlayerUrl(videoId, preview);
+
             webView.getEngine().load(playerUrl);
 
         } catch (IOException exception) {
             System.err.println(
-                    "Could not start the local YouTube player page: " + exception.getMessage());
+                    "Could not start YouTube player: "
+                    + exception.getMessage()
+            );
 
             webView.getEngine().loadContent(
-                    "<!DOCTYPE html><html><body style='margin:0;background:#10151f;color:white;"
-                    + "font-family:Arial;display:grid;place-items:center;height:100vh;text-align:center'>"
-                    + "<div>Unable to start the embedded trailer player. "
-                    + "Check that local connections are permitted.</div>"
-                    + "</body></html>");
+                    "<html><body style='background:#080b12;color:white;"
+                    + "font-family:Arial;text-align:center;padding:40px'>"
+                    + "Unable to start the embedded trailer player."
+                    + "</body></html>"
+            );
         }
     }
 
-    /**
-     * Starts or resumes the currently loaded video.
-     */
     public void playVideo() {
-        executePlayerCommand("playVideo");
+        executeScript("window.watchZSetPlaying(true);");
     }
 
-    /**
-     * Pauses the currently loaded video.
-     */
     public void pauseVideo() {
-        executePlayerCommand("pauseVideo");
+        executeScript("window.watchZSetPlaying(false);");
     }
 
-    private void executePlayerCommand(String command) {
-        if (webView.getEngine().getDocument() == null) {
-            return;
-        }
-
-        webView.getEngine().executeScript(
-                "if (window.watchZSetPlaying) { window.watchZSetPlaying("
-                + command.equals("playVideo") + "); }");
+    public void setVolume(int volume) {
+        int safeVolume = Math.max(0, Math.min(100, volume));
+        executeScript("window.watchZSetVolume(" + safeVolume + ");");
     }
 
-    /**
-     * Stops the current video and clears the WebView.
-     */
+    public void setMuted(boolean muted) {
+        executeScript("window.watchZSetMuted(" + muted + ");");
+    }
+
     public void stopVideo() {
         webView.getEngine().load("about:blank");
     }
 
-    /**
-     * Stops the shared loopback server when the JavaFX application exits.
-     */
+    private void executeScript(String script) {
+        if (webView.getEngine().getDocument() == null) {
+            return;
+        }
+
+        try {
+            webView.getEngine().executeScript(script);
+        } catch (Exception exception) {
+            System.err.println(
+                    "YouTube player command failed: "
+                    + exception.getMessage()
+            );
+        }
+    }
+
     public static synchronized void shutdown() {
         if (localServer != null) {
             localServer.close();
@@ -143,6 +135,7 @@ public class YouTubeService {
     }
 
     private static String extractVideoId(String value) {
+
         if (value == null || value.isBlank()) {
             return "";
         }
@@ -158,9 +151,6 @@ public class YouTubeService {
         return matcher.find() ? matcher.group(1) : "";
     }
 
-    /**
-     * Minimal HTTP server that serves the local YouTube player page.
-     */
     private static final class LocalPlayerServer {
 
         private final ServerSocket serverSocket;
@@ -168,11 +158,15 @@ public class YouTubeService {
         private volatile boolean running = true;
 
         private LocalPlayerServer() throws IOException {
+
             serverSocket = new ServerSocket(
-                    0, 20, InetAddress.getByName("127.0.0.1"));
+                    0, 20, InetAddress.getByName("127.0.0.1")
+            );
 
             serverThread = new Thread(
-                    this::serve, "WatchZ-YouTube-Local-Page");
+                    this::serve,
+                    "WatchZ-YouTube-Local-Page"
+            );
 
             serverThread.setDaemon(true);
             serverThread.start();
@@ -189,6 +183,7 @@ public class YouTubeService {
         }
 
         private void serve() {
+
             while (running) {
                 try {
                     Socket socket = serverSocket.accept();
@@ -197,19 +192,24 @@ public class YouTubeService {
                 } catch (IOException exception) {
                     if (running) {
                         System.err.println(
-                                "Watch Z local player server: "
-                                + exception.getMessage());
+                                "Watch Z server: " + exception.getMessage()
+                        );
                     }
                 }
             }
         }
 
         private void handle(Socket socket) {
-            try (socket;
-                 BufferedReader reader = new BufferedReader(
-                         new InputStreamReader(
-                                 socket.getInputStream(),
-                                 StandardCharsets.US_ASCII))) {
+
+            try (
+                    socket;
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(
+                                    socket.getInputStream(),
+                                    StandardCharsets.US_ASCII
+                            )
+                    )
+            ) {
 
                 String requestLine = reader.readLine();
                 String line;
@@ -222,13 +222,14 @@ public class YouTubeService {
                 boolean preview = false;
 
                 if (requestLine != null) {
+
                     Matcher videoMatcher = Pattern.compile(
-                            "(?:\\?|&)videoId=([A-Za-z0-9_-]{11})(?:&|\\s|$)")
-                            .matcher(requestLine);
+                            "(?:\\?|&)videoId=([A-Za-z0-9_-]{11})(?:&|\\s|$)"
+                    ).matcher(requestLine);
 
                     Matcher previewMatcher = Pattern.compile(
-                            "(?:\\?|&)preview=1(?:&|\\s|$)")
-                            .matcher(requestLine);
+                            "(?:\\?|&)preview=1(?:&|\\s|$)"
+                    ).matcher(requestLine);
 
                     if (videoMatcher.find()) {
                         videoId = videoMatcher.group(1);
@@ -242,7 +243,8 @@ public class YouTubeService {
 
                 OutputStream output = socket.getOutputStream();
 
-                String headers = "HTTP/1.1 200 OK\r\n"
+                String headers =
+                        "HTTP/1.1 200 OK\r\n"
                         + "Content-Type: text/html; charset=UTF-8\r\n"
                         + "Content-Length: " + body.length + "\r\n"
                         + "Cache-Control: no-store\r\n"
@@ -255,35 +257,22 @@ public class YouTubeService {
 
             } catch (IOException exception) {
                 System.err.println(
-                        "Could not serve the local YouTube player page: "
-                        + exception.getMessage());
+                        "Could not serve player page: " + exception.getMessage()
+                );
             }
         }
 
-        /**
-         * Builds the embedded YouTube player.
-         *
-         * Preview mode:
-         * - No visible YouTube controls.
-         * - Muted playback.
-         * - Loops the trailer.
-         * - Starts only when requested by the JavaFX application.
-         *
-         * Normal mode:
-         * - Displays YouTube controls.
-         * - Allows normal playback.
-         */
         private String createPlayerHtml(String videoId, boolean preview) {
 
             if (videoId == null || videoId.isBlank()) {
-                return "<!DOCTYPE html><html><body style='margin:0;background:#10151f;"
-                        + "color:white;font-family:Arial;display:grid;place-items:center;"
-                        + "height:100vh'>Invalid YouTube video ID.</body></html>";
+                return "<html><body style='background:#080b12;color:white'>"
+                        + "Invalid YouTube video ID.</body></html>";
             }
 
-            String playerOptions = preview
-                    ? "controls:0, mute:1, loop:1, playlist:'" + videoId + "', "
-                    : "controls:1, mute:0, loop:0, ";
+            String previewOptions = preview
+                    ? "controls:0, mute:1, loop:1, playlist:'"
+                            + videoId + "', "
+                    : "controls:0, mute:0, loop:0, ";
 
             String previewSetup = preview
                     ? "event.target.mute();"
@@ -299,15 +288,18 @@ public class YouTubeService {
                     + "html,body{width:100%;height:100%;margin:0;padding:0;"
                     + "overflow:hidden;background:#080b12;}"
                     + "#watchz-player{position:absolute;inset:0;width:100%;height:100%;}"
-                    + "iframe{display:block;width:100%;height:100%;border:0;"
-                    + "background:#080b12;}"
-                    + "</style>"
-                    + "</head><body>"
+                    + "iframe{display:block;width:100%;height:100%;border:0;}"
+                    + "</style></head><body>"
+
                     + "<div id='watchz-player'></div>"
+
                     + "<script>"
                     + "var watchZPlayer=null;"
                     + "var watchZPlayerReady=false;"
                     + "var watchZShouldPlay=false;"
+                    + "var watchZMuted=" + preview + ";"
+                    + "var watchZVolume=70;"
+
                     + "function onYouTubeIframeAPIReady(){"
                     + "watchZPlayer=new YT.Player('watchz-player',{"
                     + "videoId:'" + videoId + "',"
@@ -317,41 +309,56 @@ public class YouTubeService {
                     + "rel:0,"
                     + "modestbranding:1,"
                     + "enablejsapi:1,"
-                    + "origin:location.origin,"
-                    + playerOptions
+                    + previewOptions
                     + "},"
                     + "events:{"
                     + "onReady:function(event){"
                     + "watchZPlayerReady=true;"
+                    + "event.target.setVolume(watchZVolume);"
+                    + "if(watchZMuted){event.target.mute();}"
                     + previewSetup
-                    + "if(watchZShouldPlay){"
-                    + "event.target.playVideo();"
-                    + "}"
+                    + "if(watchZShouldPlay){event.target.playVideo();}"
                     + "}"
                     + "}"
                     + "});"
                     + "}"
+
                     + "window.watchZSetPlaying=function(playing){"
                     + "watchZShouldPlay=playing;"
-                    + "if(!watchZPlayerReady||!watchZPlayer){return;}"
-                    + "if(playing){"
-                    + (preview ? "watchZPlayer.mute();" : "")
-                    + "watchZPlayer.playVideo();"
-                    + "}else{"
-                    + "watchZPlayer.pauseVideo();"
+                    + "if(!watchZPlayerReady||!watchZPlayer)return;"
+                    + "if(playing){watchZPlayer.playVideo();}"
+                    + "else{watchZPlayer.pauseVideo();}"
+                    + "};"
+
+                    + "window.watchZSetVolume=function(value){"
+                    + "watchZVolume=Math.max(0,Math.min(100,value));"
+                    + "if(watchZPlayerReady&&watchZPlayer){"
+                    + "watchZPlayer.setVolume(watchZVolume);"
                     + "}"
                     + "};"
+
+                    + "window.watchZSetMuted=function(muted){"
+                    + "watchZMuted=muted;"
+                    + "if(!watchZPlayerReady||!watchZPlayer)return;"
+                    + "if(muted){watchZPlayer.mute();}"
+                    + "else{"
+                    + "watchZPlayer.unMute();"
+                    + "watchZPlayer.setVolume(watchZVolume);"
+                    + "}"
+                    + "};"
+
                     + "</script>"
+
                     + "<script src='https://www.youtube.com/iframe_api'></script>"
                     + "</body></html>";
         }
 
         private void close() {
+
             running = false;
 
             try {
                 serverSocket.close();
-
             } catch (IOException ignored) {
                 // Server is already stopping.
             }

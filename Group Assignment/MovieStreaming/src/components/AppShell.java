@@ -78,12 +78,13 @@ public class AppShell {
         VBox menu = new VBox(7);
         menu.getStyleClass().add("sidebar-menu");
 
+        // Search has been removed from the sidebar.
+        // Use the search field in the top bar instead.
         menu.getChildren().addAll(
                 navItem("Home", "home", activePage),
                 navItem("Movies", "movies", activePage),
                 navItem("Genres", "genres", activePage),
-                navItem("My List", "my-list", activePage),
-                navItem("Search", "search", activePage)
+                navItem("My List", "my-list", activePage)
         );
 
         Region spacer = new Region();
@@ -138,7 +139,6 @@ public class AppShell {
                 case "movies" -> navigation.showMovies();
                 case "genres" -> navigation.showGenres();
                 case "my-list" -> navigation.showMyList();
-                case "search" -> navigation.showSearch();
                 default -> navigation.showHome();
             }
         });

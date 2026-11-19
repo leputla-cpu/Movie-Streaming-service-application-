@@ -3,7 +3,11 @@ package components;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -11,6 +15,11 @@ import javafx.scene.web.WebView;
 import models.Movie;
 import services.NavigationService;
 import services.YouTubeService;
+
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FeaturedMovie {
 
@@ -56,16 +65,20 @@ public class FeaturedMovie {
         description.setMaxWidth(500);
         description.getStyleClass().add("featured-description");
 
-        CustomButton customButton = new CustomButton();
+        // Icon controls.
+        Label playButton = createIconControl(
+                "play.png",
+                "Play Trailer",
+                () -> navigationService.showPlayer(movie)
+        );
 
-        // Actual playback still opens the dedicated player screen.
-        StackPane playButton = customButton.create("Play Trailer", "primary-button",
-                () -> navigationService.showPlayer(movie));
+        Label moreInfoButton = createIconControl(
+                "details.png",
+                "More Info",
+                () -> navigationService.showMovieDetails(movie)
+        );
 
-        StackPane moreInfoButton = customButton.create("More Info", "secondary-button",
-                () -> navigationService.showMovieDetails(movie));
-
-        HBox controls = new HBox(15, playButton, moreInfoButton);
+        HBox controls = new HBox(12, playButton, moreInfoButton);
         controls.setAlignment(Pos.CENTER_LEFT);
         controls.setMaxWidth(Double.MAX_VALUE);
 
@@ -79,5 +92,81 @@ public class FeaturedMovie {
         featured.getChildren().addAll(trailerPreview, information);
 
         return featured;
+    }
+
+    /**
+     * Creates an icon-based clickable control.
+     */
+    private Label createIconControl(String filename, String tooltipText, Runnable action) {
+        Label control = new Label();
+
+        ImageView icon = loadIcon(filename);
+
+        if (icon != null) {
+            icon.setFitWidth(23);
+            icon.setFitHeight(23);
+            icon.setPreserveRatio(true);
+            icon.setSmooth(true);
+            control.setGraphic(icon);
+        }
+
+        control.setTooltip(new Tooltip(tooltipText));
+        control.getStyleClass().add("player-icon-button");
+        control.setCursor(Cursor.HAND);
+        control.setFocusTraversable(false);
+
+        control.setOnMouseClicked(event -> action.run());
+
+        return control;
+    }
+
+    /**
+     * Loads icons from the project's resources/images/icons folder
+     * or from the classpath.
+     */
+    private ImageView loadIcon(String filename) {
+        String[] paths = {
+                "resources/images/icons/" + filename,
+                "src/resources/images/icons/" + filename,
+                "src/main/resources/images/icons/" + filename
+        };
+
+        for (String path : paths) {
+            try {
+                Path iconPath = Path.of(path);
+
+                if (Files.isRegularFile(iconPath)) {
+                    Image image = new Image(iconPath.toUri().toString());
+
+                    if (!image.isError()) {
+                        return new ImageView(image);
+                    }
+                }
+            } catch (Exception ignored) {
+                // Try the next location.
+            }
+        }
+
+        String[] resourcePaths = {
+                "/images/icons/" + filename,
+                "/resources/images/icons/" + filename
+        };
+
+        for (String resourcePath : resourcePaths) {
+            try (InputStream stream = getClass().getResourceAsStream(resourcePath)) {
+                if (stream != null) {
+                    Image image = new Image(stream);
+
+                    if (!image.isError()) {
+                        return new ImageView(image);
+                    }
+                }
+            } catch (Exception ignored) {
+                // Try the next resource location.
+            }
+        }
+
+        System.err.println("Missing featured movie icon: " + filename);
+        return null;
     }
 }
